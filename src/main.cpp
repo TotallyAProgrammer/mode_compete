@@ -243,6 +243,15 @@ void smallAuto(std::string loc) {
   }
 }
 
+void bigAuto(std::string loc) {
+  if (loc == "blue" || loc == "red") {
+    DT.driveFor(24, distanceUnits::in);
+    DT.turnToRotation(45, rotationUnits::deg);
+    DT.driveFor(12, distanceUnits::in);
+    DT.turnToRotation(360, rotationUnits::deg);
+  }
+}
+
 /*                              Autonomous Task                              */
 
 void autonomous(void) {

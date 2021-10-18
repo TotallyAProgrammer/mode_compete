@@ -38,3 +38,6 @@ build/*.bin
 *.bin
 *.elf
 *.map
+build/modecompete.bin
+build/modecompete.elf
+build/modecompete.map
