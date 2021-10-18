@@ -35,3 +35,6 @@
 build/*.elf
 build/*.map
 build/*.bin
+*.bin
+*.elf
+*.map
