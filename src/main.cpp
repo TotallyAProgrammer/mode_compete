@@ -257,6 +257,8 @@ void bigAuto(std::string loc) {
 void autonomous(void) {
   if (AutonSelection == 5 || AutonSelection == 4) { //Small Blue and Small Red
     smallAuto("blue");
+  } else if (AutonSelection == 1 || AutonSelection == 2) { //Big Blue and Big Red
+    bigAuto("blue");
   }
 }
 
