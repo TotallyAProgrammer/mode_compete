@@ -41,6 +41,12 @@ motor rightDrive(PORT10, gearSetting::ratio18_1, true);
 // General Motors
 motor Mogoal(PORT8, gearSetting::ratio18_1, false);
 
+motor LiftMot(PORT4, gearSetting::ratio36_1, false);
+motor RiftMot(PORT6, gearSetting::ratio36_1, false);
+
+motor PurpMot(PORT2, gearSetting::ratio36_1, false);
+motor PurpRot(PORT3, gearSetting::ratio36_1, false);
+
 // Drive train
 smartdrive DT(leftDrive, rightDrive, Inertial1, 299.24, 320, 40, mm, 1);
 
@@ -63,11 +69,10 @@ led r6(ExpanderRight.F);
 led r7(ExpanderRight.G);
 led r8(ExpanderRight.H);
 
-
 void ledVisual(void) {
-  if (mode == 3) {}
+  if (mode == 3) {
+  }
 }
-
 
 /*                          Pre-Autonomous Functions                         */
 
@@ -76,7 +81,6 @@ void fullClear(void) {
   Controller1.Screen.clearScreen();
   Controller2.Screen.clearScreen();
 }
-
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE! -- note, i will do what i
@@ -255,9 +259,10 @@ void bigAuto(std::string loc) {
 /*                              Autonomous Task                              */
 
 void autonomous(void) {
-  if (AutonSelection == 5 || AutonSelection == 4) { //Small Blue and Small Red
+  if (AutonSelection == 5 || AutonSelection == 4) { // Small Blue and Small Red
     smallAuto("blue");
-  } else if (AutonSelection == 1 || AutonSelection == 2) { //Big Blue and Big Red
+  } else if (AutonSelection == 1 ||
+             AutonSelection == 2) { // Big Blue and Big Red
     bigAuto("blue");
   }
 }
@@ -288,7 +293,6 @@ void usercontrol(void) {
     Controller1.ButtonR2.pressed(modeDec);
     Controller1.ButtonR1.pressed(modeInc);
 
-
     //-----------------\/
     //                 \/
     //  Pilot Controls \/
@@ -303,6 +307,43 @@ void usercontrol(void) {
     } else {
       Mogoal.stop(brake);
     }
+
+    if (Controller1.ButtonUp.pressing() &&
+        isWithin(-340, 10, RiftMot.rotation(deg)) &&
+        isWithin(-340, 10, LiftMot.rotation(deg))) {
+      RiftMot.spin(directionType::rev, 50, pct);
+      LiftMot.spin(directionType::rev, 50, pct);
+    } else if (Controller1.ButtonDown.pressing() &&
+               isWithin(-340, 10, RiftMot.rotation(deg)) &&
+               isWithin(-340, 10, LiftMot.rotation(deg))) {
+      RiftMot.spin(directionType::fwd, 50, pct);
+      LiftMot.spin(directionType::fwd, 50, pct);
+    } else {
+      RiftMot.stop(brake);
+      LiftMot.stop(brake);
+    }
+
+    if (Controller1.ButtonLeft.pressing() &&
+        isWithin(-340, 10, PurpMot.rotation(deg))) {
+      PurpMot.spin(directionType::rev, 50, pct);
+    } else if (Controller1.ButtonRight.pressing() &&
+               isWithin(-340, 10, PurpMot.rotation(deg))) {
+      PurpMot.spin(directionType::fwd, 50, pct);
+    } else {
+      PurpMot.stop(brake);
+    }
+
+    if (Controller1.ButtonA.pressing() &&
+        isWithin(-340, 10, PurpRot.rotation(deg))) {
+      PurpRot.spin(directionType::rev, 50, pct);
+    } else if (Controller1.ButtonB.pressing() &&
+               isWithin(-340, 10, PurpRot.rotation(deg))) {
+      PurpRot.spin(directionType::fwd, 50, pct);
+    } else {
+      PurpRot.stop(brake);
+    }
+
+
     // Drive controls serperated into modes
     if (mode == 1) {
       rightDrive.spin(directionType::fwd, Controller1.Axis2.value(), pct);
