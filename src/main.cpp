@@ -27,8 +27,12 @@ competition Competition;
 
 // Sensors
 inertial Inertial1(PORT5);
-triport ExpanderLeft(PORT11);
-triport ExpanderRight(PORT12);
+triport TriSensors(PORT20);
+
+limit PurpRotForward(TriSensors.A);
+limit PurpRotReverse(TriSensors.B);
+
+// triport ExpanderRight(PORT12);
 
 // Controllers
 controller Controller1(vex::controllerType::primary);
@@ -42,7 +46,7 @@ motor rightDrive(PORT10, gearSetting::ratio18_1, true);
 motor Mogoal(PORT8, gearSetting::ratio18_1, false);
 
 motor LiftMot(PORT4, gearSetting::ratio36_1, false);
-motor RiftMot(PORT6, gearSetting::ratio36_1, false);
+motor RiftMot(PORT7, gearSetting::ratio36_1, false);
 
 motor PurpMot(PORT2, gearSetting::ratio36_1, false);
 motor PurpRot(PORT3, gearSetting::ratio36_1, false);
@@ -50,6 +54,7 @@ motor PurpRot(PORT3, gearSetting::ratio36_1, false);
 // Drive train
 smartdrive DT(leftDrive, rightDrive, Inertial1, 299.24, 320, 40, mm, 1);
 
+/*
 // LED Setup
 led l1(ExpanderLeft.A);
 led l2(ExpanderLeft.B);
@@ -73,7 +78,7 @@ void ledVisual(void) {
   if (mode == 3) {
   }
 }
-
+*/
 /*                          Pre-Autonomous Functions                         */
 
 void fullClear(void) {
@@ -83,6 +88,8 @@ void fullClear(void) {
 }
 
 void pre_auton(void) {
+  RiftMot.resetRotation();
+  LiftMot.resetRotation();
   // Initializing Robot Configuration. DO NOT REMOVE! -- note, i will do what i
   // want.
   vexcodeInit();
@@ -299,50 +306,49 @@ void usercontrol(void) {
     //                 \/
     //-----------------\/
     if (Controller1.ButtonL2.pressing() &&
-        isWithin(-340, 10, Mogoal.rotation(deg))) {
+        isWithin(-345, 15, Mogoal.rotation(deg))) {
       Mogoal.spin(directionType::rev, 50, pct);
     } else if (Controller1.ButtonL1.pressing() &&
-               isWithin(-340, 10, Mogoal.rotation(deg))) {
+               isWithin(-345, 15, Mogoal.rotation(deg))) {
       Mogoal.spin(directionType::fwd, 50, pct);
     } else {
       Mogoal.stop(brake);
     }
 
-    if (Controller1.ButtonUp.pressing() &&
-        isWithin(-340, 10, RiftMot.rotation(deg)) &&
-        isWithin(-340, 10, LiftMot.rotation(deg))) {
-      RiftMot.spin(directionType::rev, 50, pct);
-      LiftMot.spin(directionType::rev, 50, pct);
-    } else if (Controller1.ButtonDown.pressing() &&
-               isWithin(-340, 10, RiftMot.rotation(deg)) &&
-               isWithin(-340, 10, LiftMot.rotation(deg))) {
-      RiftMot.spin(directionType::fwd, 50, pct);
-      LiftMot.spin(directionType::fwd, 50, pct);
+    if (Controller1.ButtonDown.pressing() &&
+        isWithin(-1485, 20, RiftMot.rotation(deg)) &&
+        isWithin(-15, 1470, LiftMot.rotation(deg))) {
+      RiftMot.spin(directionType::fwd, 75, pct);
+      LiftMot.spin(directionType::rev, 75, pct);
+    } else if (Controller1.ButtonUp.pressing() &&
+               isWithin(-1485, 20, RiftMot.rotation(deg)) &&
+               isWithin(-15, 1470, LiftMot.rotation(deg))) {
+      RiftMot.spin(directionType::rev, 75, pct);
+      LiftMot.spin(directionType::fwd, 75, pct);
     } else {
       RiftMot.stop(brake);
       LiftMot.stop(brake);
     }
 
     if (Controller1.ButtonLeft.pressing() &&
-        isWithin(-340, 10, PurpMot.rotation(deg))) {
-      PurpMot.spin(directionType::rev, 50, pct);
+        (isWithin(-340, 10, PurpMot.rotation(deg)) || true)) {
+      PurpMot.spin(directionType::rev, 75, pct);
     } else if (Controller1.ButtonRight.pressing() &&
-               isWithin(-340, 10, PurpMot.rotation(deg))) {
-      PurpMot.spin(directionType::fwd, 50, pct);
+               (isWithin(-340, 10, PurpMot.rotation(deg)) || true)) {
+      PurpMot.spin(directionType::fwd, 75, pct);
     } else {
       PurpMot.stop(brake);
     }
 
     if (Controller1.ButtonA.pressing() &&
-        isWithin(-340, 10, PurpRot.rotation(deg))) {
+        ((PurpRot.rotation(deg) > -8) || !PurpRotForward.pressing())) {
       PurpRot.spin(directionType::rev, 50, pct);
     } else if (Controller1.ButtonB.pressing() &&
-               isWithin(-340, 10, PurpRot.rotation(deg))) {
+               ((PurpRot.rotation(deg) < 410) || !PurpRotReverse.pressing())) {
       PurpRot.spin(directionType::fwd, 50, pct);
     } else {
       PurpRot.stop(brake);
     }
-
 
     // Drive controls serperated into modes
     if (mode == 1) {
