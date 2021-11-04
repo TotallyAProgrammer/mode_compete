@@ -54,6 +54,17 @@ void AutonBypass(void) {
       NoAuton();
       AutonSelection = 6;
 }
+void Small(void) {
+  Brain.Screen.clearScreen();
+  SmallBlue();
+  AutonSelection = 5;
+}
+void Big(void) {
+  Brain.Screen.clearScreen();
+  BigBlue();
+  AutonSelection = 2;
+}
+
 void allcolor() {
   BigRed();
   BigBlue();
