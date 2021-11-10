@@ -52,7 +52,10 @@ motor_group rightDrive(FrontRightDrive, RearRightDrive);
 motor Mogoal(PORT9, gearSetting::ratio18_1, false); // updated
 
 motor LiftMot(PORT3, gearSetting::ratio36_1, false); // updated
-motor RiftMot(PORT4, gearSetting::ratio36_1, false); // updated
+motor RiftMot(PORT4, gearSetting::ratio36_1, true); // updated
+
+motor_group LT(LiftMot, RiftMot);
+
 
 motor capGoal(PORT6, gearSetting::ratio36_1, true); //thing on the lift
 
@@ -297,19 +300,11 @@ int liftTo1k(void) {
 
 void smallAuto(std::string loc) {
   if (loc == "blue" || loc == "red") {
-    Mogoal.rotateTo(90, rotationUnits::deg, false);
-    DT.driveFor(6 * 12, distanceUnits::in, 75, velocityUnits::pct);
-    vex::task liftStage1(liftTo1k);
-    vex::task rightStage1(riftTo1k);
-    vex::task::sleep(2000);
-    DT.driveFor(-2 * 12, distanceUnits::in);
-    DT.turnToRotation(-45, rotationUnits::deg);
-    Mogoal.rotateTo(0, rotationUnits::deg, false);
-    DT.driveFor(-2 * 12, distanceUnits::in);
-    DT.turnToRotation(-45 - 90, rotationUnits::deg);
-    RiftMot.rotateTo(-750, rotationUnits::deg, false);
-    LiftMot.rotateTo(750, rotationUnits::deg, true); 
-    DT.driveFor(1.5 * 12, distanceUnits::in);
+    DT.driveFor(-1*12, distanceUnits::in);
+    DT.turnToRotation(45, rotationUnits::deg);
+    LT.spinTo(100, deg);
+    DT.driveFor(-2*12, distanceUnits::in);
+    PurpRot.spin(fwd, 25, pct);
   }
 }
 
@@ -371,12 +366,12 @@ void usercontrol(void) {
         isWithin(-1500, 30, RiftMot.rotation(deg)) &&
         isWithin(-30, 1500, LiftMot.rotation(deg)) */) {
       RiftMot.spin(directionType::fwd, 75, pct);
-      LiftMot.spin(directionType::rev, 75, pct);
+      LiftMot.spin(directionType::fwd, 75, pct);
     } else if (Controller1.ButtonR1.pressing() /* &&
                isWithin(-1500, 30, RiftMot.rotation(deg)) &&
                isWithin(-30, 1500, LiftMot.rotation(deg)) */) {
       RiftMot.spin(directionType::rev, 75, pct);
-      LiftMot.spin(directionType::fwd, 75, pct);
+      LiftMot.spin(directionType::rev, 75, pct);
     } else {
       RiftMot.stop(brake);
       LiftMot.stop(brake);
