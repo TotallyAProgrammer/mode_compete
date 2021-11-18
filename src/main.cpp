@@ -41,7 +41,7 @@ controller Controller1(vex::controllerType::primary);
 controller Controller2(vex::controllerType::partner);
 
 // Drive motors
-motor RearLeftDrive(PORT1, gearSetting::ratio18_1, true);    // updated
+motor RearLeftDrive(PORT1, gearSetting::ratio18_1, true); // updated
 motor FrontLeftDrive(PORT7, gearSetting::ratio18_1, true);
 motor_group leftDrive(FrontLeftDrive, RearLeftDrive);
 motor RearRightDrive(PORT10, gearSetting::ratio18_1, false); // updated
@@ -52,12 +52,11 @@ motor_group rightDrive(FrontRightDrive, RearRightDrive);
 motor Mogoal(PORT9, gearSetting::ratio18_1, false); // updated
 
 motor LiftMot(PORT3, gearSetting::ratio36_1, false); // updated
-motor RiftMot(PORT4, gearSetting::ratio36_1, true); // updated
+motor RiftMot(PORT4, gearSetting::ratio36_1, true);  // updated
 
 motor_group LT(LiftMot, RiftMot);
 
-
-motor capGoal(PORT6, gearSetting::ratio36_1, true); //thing on the lift
+motor capGoal(PORT16, gearSetting::ratio36_1, false); // thing on the lift
 
 motor PurpRot(PORT19, gearSetting::ratio36_1, false); // lower intake
 
@@ -78,6 +77,7 @@ void fullClear(void) {
 }
 
 void pre_auton(void) {
+  Controller1.ButtonY.pressed(Small);
   valve.set(1);
   RiftMot.resetRotation();
   LiftMot.resetRotation();
@@ -223,6 +223,14 @@ void ConsScreenUpdate(int CurrentMode) {
   Controller1.Screen.newLine();
 }
 
+void toggleSolonoid(void) {
+  if (valve.value() == 0) {
+    valve.set(1);
+  } else if (valve.value() == true) {
+    valve.set(0);
+  }
+}
+
 void modeInc(void) {
   mode = mode + 1;
 
@@ -296,15 +304,62 @@ int liftTo1k(void) {
   return (0);
 }
 
+int spinNew(void) {
+    PurpRot.spin(fwd, 40, pct);
+    wait(4, sec);
+    PurpRot.stop();
+    return(0);
+    }
+
 /*    AUTON TASKS    */
 
+
 void smallAuto(std::string loc) {
-  if (loc == "blue" || loc == "red") {
-    DT.driveFor(-1*12, distanceUnits::in);
-    DT.turnToRotation(45, rotationUnits::deg);
-    LT.spinTo(100, deg);
-    DT.driveFor(-2*12, distanceUnits::in);
-    PurpRot.spin(fwd, 25, pct);
+  if (loc == "skillz") {
+    //    DT.driveFor(-0.75 * 12, distanceUnits::in);
+    //    DT.turnToRotation(45, rotationUnits::deg);
+    //    LT.spinTo(100, deg);
+    //    DT.driveFor(-2.25 * 12, distanceUnits::in);
+    DT.driveFor(-2 * 12, distanceUnits::in);
+    PurpRot.spin(fwd, 40, pct);
+    wait(4, sec);
+    DT.driveFor(-6 * 12, distanceUnits::in, 75, velocityUnits::pct);
+    DT.driveFor(6 * 12, distanceUnits::in, 75, velocityUnits::pct);
+    DT.driveFor(2 * 12, distanceUnits::in, 75, velocityUnits::pct);
+    DT.turnToRotation(125, deg);
+    DT.driveFor(5 * 12, distanceUnits::in, 75, velocityUnits::pct);
+    PurpRot.stop();
+    DT.driveFor(-1 * 12, distanceUnits::in);
+    DT.turnToRotation(75, rotationUnits::deg);
+    DT.driveFor(4 * 12, distanceUnits::in);
+    DT.turnToRotation(0, deg);
+    DT.driveFor(2 * 12, distanceUnits::in);
+    DT.turnToRotation(90, rotationUnits::deg);
+  } else if (loc == "blue" || loc == "red") {
+    toggleSolonoid();
+    capGoal.setStopping(hold);
+    capGoal.spinTo(270, rotationUnits::deg, false);
+    DT.driveFor(4.6 * 12, distanceUnits::in, 80, velocityUnits::pct);
+    DT.driveFor(0.3 * 12, distanceUnits::in, 25, velocityUnits::pct);
+    capGoal.spinTo(0, rotationUnits::deg, true);
+    capGoal.stop(brake);
+    LT.spinTo(300, deg);
+    DT.driveFor(-4 * 12, distanceUnits::in, 60, velocityUnits::pct);
+    DT.turnToRotation(-115, rotationUnits::deg, 35, velocityUnits::pct);
+    DT.driveFor(-1.75 * 12, distanceUnits::in);
+    toggleSolonoid();
+/*     PurpRot.spin(fwd, 40, pct);
+    wait(4, sec);
+    PurpRot.stop(); */
+    vex::task t1( spinNew );
+    DT.driveFor(1.75 * 12, distanceUnits::in);
+    /*     DT.driveFor(-0.75 * 12, distanceUnits::in);
+        DT.turnToRotation(45, rotationUnits::deg);
+        LT.spinTo(100, deg);
+        DT.driveFor(-2.25 * 12, distanceUnits::in);
+        PurpRot.spin(fwd, 40, pct);
+        wait(4, sec);
+        PurpRot.stop(); */
   }
 }
 
@@ -317,14 +372,6 @@ void bigAuto(std::string loc) {
   }
 }
 
-void toggleSolonoid(void) {
-  if (valve.value() == 0) {
-    valve.set(1);
-  } else if (valve.value() == true) {
-    valve.set(0);
-  }
-}
-
 /*                              Autonomous Task                              */
 
 void autonomous(void) {
@@ -333,6 +380,8 @@ void autonomous(void) {
   } else if (AutonSelection == 1 ||
              AutonSelection == 2) { // Big Blue and Big Red
     bigAuto("blue");
+  } else if (AutonSelection == 3) {
+    smallAuto("skillz");
   }
 }
 
@@ -352,22 +401,22 @@ void usercontrol(void) {
     //  Pilot Controls \/
     //                 \/
     //-----------------\/
-//    if (Controller1.ButtonL2.pressing() /*&&
-//        isWithin(-15, 350, Mogoal.rotation(deg))*/) {
-//      Mogoal.spin(directionType::rev, 50, pct);
-//    } else if (Controller1.ButtonL1.pressing() /* &&
-//               isWithin(-15, 350, Mogoal.rotation(deg)) */) {
-//      Mogoal.spin(directionType::fwd, 50, pct);
-//    } else {
-//      Mogoal.stop(brake);
-//    }
+    //    if (Controller1.ButtonL2.pressing() /*&&
+    //        isWithin(-15, 350, Mogoal.rotation(deg))*/) {
+    //      Mogoal.spin(directionType::rev, 50, pct);
+    //    } else if (Controller1.ButtonL1.pressing() /* &&
+    //               isWithin(-15, 350, Mogoal.rotation(deg)) */) {
+    //      Mogoal.spin(directionType::fwd, 50, pct);
+    //    } else {
+    //      Mogoal.stop(brake);
+    //    }
 
-    if (Controller1.ButtonR2.pressing() /* &&
+    if (Controller1.ButtonR1.pressing() /* &&
         isWithin(-1500, 30, RiftMot.rotation(deg)) &&
         isWithin(-30, 1500, LiftMot.rotation(deg)) */) {
       RiftMot.spin(directionType::fwd, 75, pct);
       LiftMot.spin(directionType::fwd, 75, pct);
-    } else if (Controller1.ButtonR1.pressing() /* &&
+    } else if (Controller1.ButtonR2.pressing() /* &&
                isWithin(-1500, 30, RiftMot.rotation(deg)) &&
                isWithin(-30, 1500, LiftMot.rotation(deg)) */) {
       RiftMot.spin(directionType::rev, 75, pct);
@@ -410,8 +459,6 @@ void usercontrol(void) {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-
-
 
   Controller1.ButtonDown.pressed(modeDec);
   Controller1.ButtonUp.pressed(modeInc);
