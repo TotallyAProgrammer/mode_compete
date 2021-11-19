@@ -305,14 +305,13 @@ int liftTo1k(void) {
 }
 
 int spinNew(void) {
-    PurpRot.spin(fwd, 40, pct);
-    wait(4, sec);
-    PurpRot.stop();
-    return(0);
-    }
+  PurpRot.spin(fwd, 40, pct);
+  wait(4, sec);
+  PurpRot.stop();
+  return (0);
+}
 
 /*    AUTON TASKS    */
-
 
 void smallAuto(std::string loc) {
   if (loc == "skillz") {
@@ -320,22 +319,21 @@ void smallAuto(std::string loc) {
     //    DT.turnToRotation(45, rotationUnits::deg);
     //    LT.spinTo(100, deg);
     //    DT.driveFor(-2.25 * 12, distanceUnits::in);
-    DT.driveFor(-2 * 12, distanceUnits::in);
-    PurpRot.spin(fwd, 40, pct);
-    wait(4, sec);
-    DT.driveFor(-6 * 12, distanceUnits::in, 75, velocityUnits::pct);
-    DT.driveFor(6 * 12, distanceUnits::in, 75, velocityUnits::pct);
-    DT.driveFor(2 * 12, distanceUnits::in, 75, velocityUnits::pct);
-    DT.turnToRotation(125, deg);
-    DT.driveFor(5 * 12, distanceUnits::in, 75, velocityUnits::pct);
-    PurpRot.stop();
-    DT.driveFor(-1 * 12, distanceUnits::in);
-    DT.turnToRotation(75, rotationUnits::deg);
-    DT.driveFor(4 * 12, distanceUnits::in);
-    DT.turnToRotation(0, deg);
-    DT.driveFor(2 * 12, distanceUnits::in);
-    DT.turnToRotation(90, rotationUnits::deg);
-  } else if (loc == "blue" || loc == "red") {
+    /*     DT.driveFor(-2 * 12, distanceUnits::in);
+        PurpRot.spin(fwd, 40, pct);
+        wait(4, sec);
+        DT.driveFor(-6 * 12, distanceUnits::in, 75, velocityUnits::pct);
+        DT.driveFor(6 * 12, distanceUnits::in, 75, velocityUnits::pct);
+        DT.driveFor(2 * 12, distanceUnits::in, 75, velocityUnits::pct);
+        DT.turnToRotation(125, deg);
+        DT.driveFor(5 * 12, distanceUnits::in, 75, velocityUnits::pct);
+        PurpRot.stop();
+        DT.driveFor(-1 * 12, distanceUnits::in);
+        DT.turnToRotation(75, rotationUnits::deg);
+        DT.driveFor(4 * 12, distanceUnits::in);
+        DT.turnToRotation(0, deg);
+        DT.driveFor(2 * 12, distanceUnits::in);
+        DT.turnToRotation(90, rotationUnits::deg); */
     toggleSolonoid();
     capGoal.setStopping(hold);
     capGoal.spinTo(270, rotationUnits::deg, false);
@@ -346,13 +344,30 @@ void smallAuto(std::string loc) {
     LT.spinTo(300, deg);
     DT.driveFor(-4 * 12, distanceUnits::in, 60, velocityUnits::pct);
     DT.turnToRotation(-115, rotationUnits::deg, 35, velocityUnits::pct);
+    DT.driveFor(-1.5 * 12, distanceUnits::in);
+    toggleSolonoid();
+    DT.turnToRotation(180, rotationUnits::deg, 35, velocityUnits::pct);
+    DT.driveFor(-10 * 12, distanceUnits::in, 75, velocityUnits::pct);
+
+  } else if (loc == "blue" || loc == "red") {
+    toggleSolonoid();
+    capGoal.setStopping(hold);
+    capGoal.spinTo(270, rotationUnits::deg, false);
+    DT.driveFor(4.6 * 12, distanceUnits::in, 100, velocityUnits::pct);
+    DT.driveFor(0.3 * 12, distanceUnits::in, 30, velocityUnits::pct);
+    capGoal.spinTo(0, rotationUnits::deg, true);
+    capGoal.stop(brake);
+    LT.spinTo(300, deg, false);
+    DT.driveFor(-4 * 12, distanceUnits::in, 60, velocityUnits::pct);
+    DT.turnToRotation(-115, rotationUnits::deg, 35, velocityUnits::pct);
     DT.driveFor(-1.75 * 12, distanceUnits::in);
     toggleSolonoid();
-/*     PurpRot.spin(fwd, 40, pct);
+    PurpRot.spin(fwd, 40, pct);
     wait(4, sec);
-    PurpRot.stop(); */
-    vex::task t1( spinNew );
-    DT.driveFor(1.75 * 12, distanceUnits::in);
+    PurpRot.stop();
+    //vex::task t1(spinNew);
+    //t1.resume();
+    //DT.driveFor(1.75 * 12, distanceUnits::in);
     /*     DT.driveFor(-0.75 * 12, distanceUnits::in);
         DT.turnToRotation(45, rotationUnits::deg);
         LT.spinTo(100, deg);
