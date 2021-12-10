@@ -464,9 +464,9 @@ void usercontrol(void) {
     }
 
     if (Controller1.ButtonA.pressing()) {
-      PurpRot.spin(directionType::rev, 50, pct);
+      PurpRot.spin(directionType::rev, 75, pct);
     } else if (Controller1.ButtonB.pressing()) {
-      PurpRot.spin(directionType::fwd, 50, pct);
+      PurpRot.spin(directionType::fwd, 75, pct);
     } else {
       PurpRot.stop(brake);
     }
