@@ -333,13 +333,13 @@ void smallAuto(std::string loc) {
     wait(4, sec);
     PurpRot.stop();
     DT.turnToRotation(0, deg);
-    DT.driveFor(8*12, distanceUnits::in);
-    LT.spinTo(0,deg);
-    DT.driveFor(-0.3*12, distanceUnits::in);
-    DT.turnToRotation(-90,  deg);
-    DT.driveFor(-0.5*12, distanceUnits::in);
+    DT.driveFor(8 * 12, distanceUnits::in);
+    LT.spinTo(0, deg);
+    DT.driveFor(-0.3 * 12, distanceUnits::in);
+    DT.turnToRotation(-90, deg);
+    DT.driveFor(-0.5 * 12, distanceUnits::in);
     toggleSolonoid();
-    DT.driveFor(6*12, distanceUnits::in);
+    DT.driveFor(6 * 12, distanceUnits::in);
   } else if (loc == "blue" || loc == "red") {
     toggleSolonoid();
     capGoal.setStopping(hold);
@@ -363,8 +363,14 @@ void smallAuto(std::string loc) {
 
 void bigAuto(std::string loc) {
   if (loc == "blue" || loc == "red") {
-    PurpRot.spin(fwd, 40, pct);
-    
+    toggleSolonoid();
+    LT.spinTo(300, deg, false);
+    DT.driveFor(-0.5*12, distanceUnits::in);
+    toggleSolonoid();
+    PurpRot.spin(fwd, 65, pct);
+    wait(4, sec);
+    PurpRot.stop();
+    DT.driveFor(0.5*12, distanceUnits::in);
   }
 }
 
