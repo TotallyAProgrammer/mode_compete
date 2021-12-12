@@ -362,7 +362,7 @@ void smallAuto(std::string loc) {
 }
 
 void bigAuto(std::string loc) {
-  if (loc == "blue" || loc == "red") {
+  if (loc == "blue") {
     toggleSolonoid();
     LT.spinTo(300, deg, false);
     DT.driveFor(-0.5*12, distanceUnits::in);
@@ -371,6 +371,9 @@ void bigAuto(std::string loc) {
     wait(4, sec);
     PurpRot.stop();
     DT.driveFor(0.5*12, distanceUnits::in);
+  } else if ( loc == "red") {
+    //DT.driveFor(3.5*12, distanceUnits::in);
+    LT.spinTo(300, deg, false);
   }
 }
 
